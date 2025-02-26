@@ -6,6 +6,7 @@ from behave import given, when, then, step
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from page_objects.login_page import LoginPage
 
 # Locators
 LOCATORS = {
@@ -20,6 +21,7 @@ LOCATORS = {
 @given('I am on the SauceDemo login page')
 def step_impl(context):
     context.driver.get("https://www.saucedemo.com/")
+    context.login_page = LoginPage(context.driver)
     assert context.driver.current_url == "https://www.saucedemo.com/", "Not on login page"
 
 @when('I enter username "{username}"')
@@ -28,7 +30,7 @@ def step_impl(context, username):
     username_field.clear()
     username_field.send_keys(username)
 
-@when('I enter password "{password}')
+@when('I enter password "{password}"')
 def step_impl(context, password):
     password_field = context.driver.find_element(*LOCATORS["password_field"])
     password_field.clear()
@@ -36,8 +38,7 @@ def step_impl(context, password):
 
 @when('I click the login button')
 def step_impl(context):
-    login_button = context.driver.find_element(*LOCATORS["login_button"])
-    login_button.click()
+   context.login_page.click_login()
 
 @when('I click on burger menu')
 def step_impl(context):
