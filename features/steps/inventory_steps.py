@@ -37,13 +37,27 @@ def step_impl(context, count):
 @then('each product should have correct details from test data')
 def step_impl(context):
     product_names = context.inventory_page.get_product_details()
+    errors = []  # Collect all mismatches
+
     for i, (name, description, price, image) in enumerate(product_names):
         product = PRODUCT_DATA["products"][i]
-        assert product["name"] == name.text, f"Product name mismatch for product {i}"
-        assert product["description"] == description.text, f"Description mismatch for {product['name']}"
-        assert f"${product['price']}" == price.text, f"Price mismatch for {product['name']}"
-        assert product['image_url'] in image.get_attribute("src"), \
-            f"Image URL mismatch for {product['name']}"
+
+        if product["name"] != name.text:
+            errors.append(f"Product name mismatch for {i}: expected '{product['name']}', got '{name.text}'")
+
+        if product["description"] != description.text:
+            errors.append(f"Description mismatch for {product['name']}: expected '{product['description']}', got '{description.text}'")
+
+        expected_price = f"${product['price']}"
+        if expected_price != price.text:
+            errors.append(f"Price mismatch for {product['name']}: expected '{expected_price}', got '{price.text}'")
+
+        if product['image_url'] not in image.get_attribute("src"):
+            errors.append(f"Image URL mismatch for {product['name']}: expected part of '{product['image_url']}', got '{image.get_attribute('src')}'")
+
+    if errors:
+        raise AssertionError("\n".join(errors))  # Raise AssertionError with full list
+
 
 @then('each product should have an "Add to cart" button')
 def step_impl(context):
