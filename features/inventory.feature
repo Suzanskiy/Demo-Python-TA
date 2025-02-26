@@ -1,7 +1,7 @@
 Feature: Inventory Page Functionality
 
   Background:
-    Given I am logged in as "visual_user"
+    Given I am logged in as "standard_user"
     And I am on the inventory page
 
   @ui @inventory

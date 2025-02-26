@@ -2,6 +2,7 @@ from selenium.common import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import Select
 from .base_page import BasePage
 
 class InventoryPage(BasePage):
@@ -12,10 +13,16 @@ class InventoryPage(BasePage):
         "product_names": (By.CLASS_NAME, "inventory_item_name"),
         "product_descriptions": (By.CLASS_NAME, "inventory_item_desc"),
         "product_prices": (By.CLASS_NAME, "inventory_item_price"),
-        "product_images": (By.XPATH, "//img[@class='inventory_item_img']"),
+        "product_images": (By.CLASS_NAME, "inventory_item_img"),
         "add_to_cart_buttons": (By.CLASS_NAME, "btn_small"),
         "burger_menu": (By.ID, "react-burger-menu-btn"),
-        "logout_link": (By.ID, "logout_sidebar_link")
+        "logout_link": (By.ID, "logout_sidebar_link"),
+        "sort_dropdown": (By.CLASS_NAME, "product_sort_container")
+    }
+
+    SORT_OPTIONS = {
+        "az": "az",  # Name (A to Z)
+        "za": "za",  # Name (Z to A)
     }
 
     def __init__(self, driver):
@@ -61,3 +68,18 @@ class InventoryPage(BasePage):
 
     def get_product_names(self):
         return self.find_elements(self.LOCATORS["product_names"])
+
+    def sort_products(self, sort_option):
+        """
+        Sort products using the dropdown menu
+        :param sort_option: One of: 'az', 'za', 
+        """
+        if sort_option not in self.SORT_OPTIONS:
+            raise ValueError(f"Invalid sort option. Must be one of: {list(self.SORT_OPTIONS.keys())}")
+        
+        select = Select(self.find_element(self.LOCATORS["sort_dropdown"]))
+        select.select_by_value(self.SORT_OPTIONS[sort_option])
+
+    def get_product_names_list(self):
+        """Return list of product names in current order"""
+        return [name.text for name in self.find_elements(self.LOCATORS["product_names"])]
