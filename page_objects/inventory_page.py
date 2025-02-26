@@ -13,7 +13,7 @@ class InventoryPage(BasePage):
         "product_names": (By.CLASS_NAME, "inventory_item_name"),
         "product_descriptions": (By.CLASS_NAME, "inventory_item_desc"),
         "product_prices": (By.CLASS_NAME, "inventory_item_price"),
-        "product_images": (By.CLASS_NAME, "inventory_item_img"),
+        "product_images": (By.XPATH, "//img[@class='inventory_item_img']"),
         "add_to_cart_buttons": (By.CLASS_NAME, "btn_small"),
         "burger_menu": (By.ID, "react-burger-menu-btn"),
         "logout_link": (By.ID, "logout_sidebar_link"),

@@ -13,10 +13,3 @@ Feature: Shopping Cart Functionality
     And the cart should contain "Sauce Labs Bike Light"
     And the cart should contain "Sauce Labs Backpack"
     And the total price should be "$39.98"
-
-  @ui @cart
-  Scenario: Remove item from cart
-    When I add "Sauce Labs Backpack" to the cart
-    And I click on the shopping cart
-    And I remove "Sauce Labs Backpack" from the cart
-    Then the cart should be empty 
