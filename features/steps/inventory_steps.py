@@ -1,9 +1,9 @@
-#  © 2025 Serhii Suzanskyi 🚀
-#  Open-source and awesome! Use it, modify it, share it—just don't break it. 😉
+#  © 2025 Serhii Suzanskyi
+#  Open-source and awesome! Use it, modify it, share it—just don’t break it.
 #  See LICENSE for details.
 
 import json
-from behave import given, when, then
+from behave import given, when, then, step
 from page_objects.inventory_page import InventoryPage
 from page_objects.login_page import LoginPage
 
@@ -51,25 +51,23 @@ def step_impl(context):
     product_count = len(context.inventory_page.get_product_names())
     assert len(buttons) == product_count, "Not all products have Add to cart button"
 
-@when('I add "{product_name}" to the cart')
+@step('I add "{product_name}" to the cart')
 def step_impl(context, product_name):
     product_data = next(p for p in PRODUCT_DATA["products"] if p["name"] == product_name)
     context.inventory_page.add_to_cart(product_data["id"])
 
+
+
 @then('the cart badge should show "{count}"')
 def step_impl(context, count):
     actual_count = context.inventory_page.get_cart_badge_count()
-    assert actual_count == count, f"Expected cart count {count}, but got {actual_count}"
+    assert actual_count == int(count), f"Expected cart count {count}, but got {actual_count}"
 
 @then('the button text should change to "{text}"')
 def step_impl(context, text):
     buttons = context.inventory_page.get_add_to_cart_buttons()
-    var = lambda driver: any(button.text.strip() == text for button in buttons)
+    res = lambda driver: any(button.text.strip() == text for button in buttons)
     assert any(button.text.strip() == text for button in buttons), f"No button changed to '{text}'"
-
-@when('I add the following products to cart')
-def step_impl(context):
-  raise NotImplementedError()
 
 @when('I click Remove for "{product_name}"')
 def step_impl(context, product_name):
@@ -79,4 +77,4 @@ def step_impl(context, product_name):
 @then('the cart badge should not be visible')
 def step_impl(context):
     badges = context.inventory_page.get_cart_badge_count()
-    assert len(badges) == 0, "Cart badge is still visible" 
+    assert badges == 0, "Cart badge is still visible"

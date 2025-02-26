@@ -1,3 +1,4 @@
+from selenium.common import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -42,8 +43,11 @@ class InventoryPage(BasePage):
         self.click((By.ID, f"remove-{product_id}"))
 
     def get_cart_badge_count(self):
-        badges = self.find_elements(self.LOCATORS["cart_badge"])
-        return badges[0].text if badges else None
+        try:
+            badges = self.find_elements(self.LOCATORS["cart_badge"])
+            return int(badges[0].text) if badges else 0
+        except TimeoutException:
+            return 0
 
     def click_burger_menu(self):
         self.click(self.LOCATORS["burger_menu"])

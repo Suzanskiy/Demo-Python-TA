@@ -1,7 +1,7 @@
 Feature: Inventory Page Functionality
 
   Background:
-    Given I am logged in as "standard_user"
+    Given I am logged in as "visual_user"
     And I am on the inventory page
 
   @ui @inventory
@@ -18,11 +18,11 @@ Feature: Inventory Page Functionality
 
   @ui @inventory
   Scenario: Add multiple products to cart
-    When I add the following products to cart:
-      | Sauce Labs Backpack     |
-      | Sauce Labs Bike Light   |
-      | Sauce Labs Bolt T-Shirt |
+    When I add "Sauce Labs Backpack" to the cart
+    When I add "Sauce Labs Bike Light" to the cart
+    When I add "Sauce Labs Bolt T-Shirt" to the cart
     Then the cart badge should show "3"
+
 
   @ui @inventory
   Scenario: Remove product from cart
