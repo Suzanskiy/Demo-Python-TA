@@ -17,6 +17,9 @@ class BasePage:
     def find_element(self, locator):
         return self.wait.until(EC.presence_of_element_located(locator))
 
+    def find_elements(self, locator):
+        return self.wait.until(EC.presence_of_all_elements_located(locator))
+
     def click(self, locator):
         self.wait.until(EC.element_to_be_clickable(locator)).click()
 
@@ -25,5 +28,5 @@ class BasePage:
         element.clear()
         element.send_keys(text)
 
-    def find_elements(self, locator):
-        return self.wait.until(EC.presence_of_all_elements_located(locator))
+
+
