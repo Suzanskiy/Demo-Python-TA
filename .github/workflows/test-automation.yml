@@ -2,7 +2,7 @@ name: Test Automation
 
 on:
   push:
-    branches: [ main, master,  deployment/pipeline]
+    branches: [ main, master,  deployment/pipeline ]
   pull_request:
     branches: [ main, master ]
   workflow_dispatch:
@@ -32,22 +32,45 @@ jobs:
           source .venv/bin/activate
           behave  --tags=@login || true # Prevent pipeline failure on test failures
 
-      - name: Install Allure and Generate Report
+      - name: Install Allure
         run: |
           curl -sLo allure-2.24.0.tgz https://github.com/allure-framework/allure2/releases/download/2.24.0/allure-2.24.0.tgz
           tar -zxvf allure-2.24.0.tgz
           sudo mv allure-2.24.0 /opt/allure
           sudo ln -s /opt/allure/bin/allure /usr/local/bin/allure
 
-      - name: Upload Allure Report as Artifact
-        uses: actions/upload-artifact@v4
+      - name: Load test report history
+        uses: actions/checkout@v3
+        if: always()
+        continue-on-error: true
         with:
-          name: allure-report
-          path: reports/allure-report
+            ref: gh-pages
+            path: gh-pages
 
-      - name: Deploy Allure Report to GitHub Pages
-        if: github.event_name == 'push'
-        uses: peaceiris/actions-gh-pages@v3
+      - name: Build test report
+        uses: simple-elf/allure-report-action@v1.7
+        if: always()
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: reports/allure-report
+            gh_pages: gh-pages
+            allure_history: allure-history
+            allure_results: reports/allure-report
+
+      - name: Publish test report
+        uses: peaceiris/actions-gh-pages@v3
+        if: always()
+        with:
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+            publish_branch: gh-pages
+            publish_dir: allure-history
+#      - name: Upload Allure Report as Artifact
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: allure-report
+#          path: reports/allure-report
+#
+#      - name: Deploy Allure Report to GitHub Pages
+#        if: github.event_name == 'push'
+#        uses: peaceiris/actions-gh-pages@v3
+#        with:
+#          github_token: ${{ secrets.GITHUB_TOKEN }}
+#          publish_dir: reports/allure-report
