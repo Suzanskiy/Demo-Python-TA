@@ -57,12 +57,12 @@ jobs:
 
     - name: Run UI tests with Allure
       run: |
-        behave -f allure_behave.formatter:AllureFormatter -o allure-results ./features --tags=@ui
+        behave --tags=@ui
       continue-on-error: true
 
     - name: Run API tests with Allure
       run: |
-        behave -f allure_behave.formatter:AllureFormatter -o allure-results ./features --tags=@api
+        behave --tags=@api
       continue-on-error: true
 
     - name: Generate Allure Report
