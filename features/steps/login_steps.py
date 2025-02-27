@@ -1,18 +1,27 @@
 #  © 2025 Serhii Suzanskyi 🚀
-#  Open-source and awesome! Use it, modify it, share it—just don’t break it. 😉
+#  Open-source and awesome! Use it, modify it, share it—just don't break it. 😉
 #  See LICENSE for details.
 
 from behave import given, when, then, step
 
 from page_objects.inventory_page import InventoryPage
 from page_objects.login_page import LoginPage
-
+from config.users import Users
 
 @given('I am on the SauceDemo login page')
 def step_impl(context):
     context.login_page = LoginPage(context.driver)
     context.login_page.open()
     assert context.login_page.is_on_login_page()
+
+@given('I am logged in as "{username}"')
+def step_impl(context, username):
+    context.login_page = LoginPage(context.driver)
+    context.login_page.open()
+    password = Users.get_password(username)
+    context.login_page.enter_username(username)
+    context.login_page.enter_password(password)
+    context.login_page.click_login()
 
 @when('I enter username "{username}"')
 def step_impl(context, username):
