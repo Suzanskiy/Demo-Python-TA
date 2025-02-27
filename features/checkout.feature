@@ -2,7 +2,7 @@ Feature: Checkout Process
 
   # AC1 checkout via inventory page
   @ui @checkout
-  Scenario Outline: Complete checkout process with multiple items
+  Scenario Outline: Complete checkout process with multiple items for <username>
     Given I am logged in as "<username>"
     And I am on the inventory page
     When I add "Sauce Labs Backpack" to the cart
@@ -25,12 +25,8 @@ Feature: Checkout Process
     Then I should be back on the inventory page
 
     Examples:
-      | username                |
-      | standard_user          |
-      | problem_user           |
-      | performance_glitch_user|
-      | error_user             |
-      | visual_user            |
+      | username    |
+      | <all_users> |
 
     # AC2 checkout via product page
   @ui @checkout @product-details
@@ -58,9 +54,5 @@ Feature: Checkout Process
     Then I should see the order confirmation page
     And the confirmation header should be "Thank you for your order!"
     Examples:
-      | username                |
-      | standard_user          |
-      | problem_user           |
-      | performance_glitch_user|
-      | error_user             |
-      | visual_user            |
+      | username    |
+      | <all_users> |
