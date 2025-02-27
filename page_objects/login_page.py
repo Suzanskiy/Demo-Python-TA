@@ -38,4 +38,17 @@ class LoginPage(BasePage):
         return self.find_element(self.LOCATORS["error_message"]).text
 
     def is_on_login_page(self):
-        return self.driver.current_url == self.url 
+        return self.driver.current_url == self.url
+
+    def click_on_burger_menu(self):
+        return self.driver.find_element(*self.LOCATORS["burger_menu"]).click()
+
+    def click_logout_link(self):
+       el =  self.find_element(self.LOCATORS["logout_link"]).click()
+       return self.click(el)
+
+    def enter_empty_password(self):
+        return "empty password"
+
+    def enter_empty_username(self):
+        return "empty username"

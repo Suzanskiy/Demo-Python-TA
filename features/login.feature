@@ -8,7 +8,7 @@ Feature: SauceDemo Login Functionality
     When I enter username "standard_user"
     And I enter password "secret_sauce"
     And I click the login button
-    Then I should be successfully logged in
+    Then I am on the inventory page
     And I should see the inventory page
 
   @ui @auth @negative

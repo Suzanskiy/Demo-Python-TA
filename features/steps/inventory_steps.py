@@ -23,7 +23,7 @@ def step_impl(context, username):
     assert context.inventory_page.is_on_inventory_page()
 
 
-@given('I am on the inventory page')
+@step('I am on the inventory page')
 def step_impl(context):
     context.inventory_page = InventoryPage(context.driver)
     context.inventory_page.wait_for_page_load()

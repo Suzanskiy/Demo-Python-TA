@@ -9,10 +9,8 @@ from utilities.api_client import APIClient
 def before_all(context):
     # Load configuration
     context.config = {
-        'base_url': 'https://your-application-url.com',
         'browser': 'chrome',
         "implicit_wait": 10,
-        "api_base_url": "https://your-api-url.com"
     }
 
 def before_scenario(context, scenario):

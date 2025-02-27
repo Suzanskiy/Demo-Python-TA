@@ -21,7 +21,9 @@ class BasePage:
         return self.wait.until(EC.presence_of_all_elements_located(locator))
 
     def click(self, locator):
-        self.wait.until(EC.element_to_be_clickable(locator)).click()
+        self.wait_for_page_load()
+        element = self.wait.until(EC.presence_of_element_located(locator))
+        self.driver.execute_script("arguments[0].click();", element)
 
     def input_text(self, locator, text):
         element = self.wait.until(EC.presence_of_element_located(locator))
