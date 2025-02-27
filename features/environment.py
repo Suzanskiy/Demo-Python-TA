@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from behave.parser import parse_file
 
 from utilities.driver_factory import DriverFactory
@@ -69,3 +71,13 @@ def before_feature(context, feature):
     # Parse and replace the existing feature with the updated version
     parsed_feature = parse_file(feature_file_path)
     feature.__dict__.update(parsed_feature.__dict__)  # Force update in place
+
+
+def after_all(context):
+    # Optionally rename the report with timestamp
+    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    if os.path.exists('test_reports/report.html'):
+        os.rename(
+            'test_reports/report.html',
+            f'test_reports/report_{timestamp}.html'
+        )
