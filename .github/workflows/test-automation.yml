@@ -27,33 +27,27 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
 
-#      - name: Install ChromeDriver
-#        run: |
-#            CHROME_VERSION=$(google-chrome --version | cut -d ' ' -f 3 | cut -d '.' -f 1)
-#            CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION")
-#            curl -L -o chromedriver.zip "https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip"
-#            unzip chromedriver.zip
-#            chmod +x chromedriver
-#            sudo mv chromedriver /usr/local/bin/
-#            chromedriver --version
-
-#      - name: Install ChromeDriver
-#        run: |
-#              CHROME_VERSION=$(google-chrome --version | cut -d ' ' -f 3 | cut -d '.' -f 1)
-#              CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION")
-#              curl -L -o chromedriver.zip "https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip"
-#              unzip chromedriver.zip
-#              chmod +x chromedriver
-#              sudo mv chromedriver /usr/local/bin/
-#              chromedriver --version
-
       - name: Run Behave Tests
         run: |
           source .venv/bin/activate
           behave  || true # Prevent pipeline failure on test failures
 
-      - name: Upload Test Report
+      - name: Install Allure and Generate Report
+        run: |
+          sudo apt-add-repository ppa:qameta/allure -y
+          sudo apt-get update
+          sudo apt-get install -y allure
+          allure generate reports/allure-results --clean -o reports/allure-report
+
+      - name: Upload Allure Report as Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: behave-test-report
-          path: report.txt
+          name: allure-report
+          path: reports/allure-report
+
+      - name: Deploy Allure Report to GitHub Pages
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: reports/allure-report
