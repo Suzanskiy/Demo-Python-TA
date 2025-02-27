@@ -1,4 +1,13 @@
 from datetime import datetime
+import allure
+from allure_commons.types import AttachmentType
+from behave.model_core import Status
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+import os
+import shutil
+import tempfile
 
 from behave.parser import parse_file
 
@@ -7,8 +16,21 @@ from utilities.api_client import APIClient
 from config.users import Users
 from behave.model import Scenario
 from behave.model import Table
-import os
 
+
+def create_chrome_options():
+    chrome_options = Options()
+    # Add required options
+    chrome_options.add_argument('--no-sandbox')
+    chrome_options.add_argument('--headless')  # Run in headless mode for CI
+    chrome_options.add_argument('--disable-dev-shm-usage')
+    chrome_options.add_argument('--disable-gpu')
+    
+    # Create a temporary directory for user data
+    user_data_dir = tempfile.mkdtemp()
+    chrome_options.add_argument(f'--user-data-dir={user_data_dir}')
+    
+    return chrome_options, user_data_dir
 
 def before_all(context):
     # Load configuration
@@ -38,6 +60,14 @@ def before_all(context):
             # Write the modified content back
             with open(feature_path, "w", encoding="utf-8") as file:
                 file.write(updated_content)
+
+    # Create reports and screenshots directories
+    for dir_path in ['test_reports', 'test_reports/screenshots']:
+        if not os.path.exists(dir_path):
+            os.makedirs(dir_path)
+    
+    # Store the user data directory path for cleanup
+    context.user_data_dir = None
 
 
 def before_scenario(context, scenario):
@@ -72,6 +102,39 @@ def before_feature(context, feature):
     parsed_feature = parse_file(feature_file_path)
     feature.__dict__.update(parsed_feature.__dict__)  # Force update in place
 
+    if 'api' in feature.tags:
+        # Skip browser setup for API features
+        return
+
+    # Set up Chrome options and user data directory
+    chrome_options, user_data_dir = create_chrome_options()
+    context.user_data_dir = user_data_dir
+    
+    # Initialize the WebDriver
+    service = Service()
+    context.driver = webdriver.Chrome(service=service, options=chrome_options)
+    context.driver.implicitly_wait(10)
+
+    # Process scenario outlines
+    for scenario in feature.walk_scenarios():
+        if hasattr(scenario, 'examples'):
+            for example in scenario.examples:
+                if '<valid_users>' in str(example.table):
+                    new_rows = []
+                    for user in context.valid_users:
+                        new_rows.append([user])
+                    example.table.rows = new_rows
+
+def after_feature(context, feature):
+    if hasattr(context, 'driver'):
+        context.driver.quit()
+    
+    # Clean up the user data directory
+    if context.user_data_dir and os.path.exists(context.user_data_dir):
+        try:
+            shutil.rmtree(context.user_data_dir)
+        except Exception as e:
+            print(f"Failed to remove user data directory: {e}")
 
 def after_all(context):
     # Optionally rename the report with timestamp
@@ -81,3 +144,40 @@ def after_all(context):
             'test_reports/report.html',
             f'test_reports/report_{timestamp}.html'
         )
+
+    # Clean up any remaining user data directories
+    if hasattr(context, 'user_data_dir') and context.user_data_dir:
+        try:
+            shutil.rmtree(context.user_data_dir)
+        except Exception as e:
+            print(f"Failed to remove user data directory: {e}")
+
+def after_step(context, step):
+    if step.status == Status.failed and hasattr(context, 'driver'):
+        # Get scenario and step names
+        scenario_name = ''.join(e for e in context.scenario.name if e.isalnum() or e == '_')
+        step_name = ''.join(e for e in step.name if e.isalnum() or e == '_')
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        
+        try:
+            # Take screenshot
+            screenshot_name = f"{scenario_name}_{step_name}_{timestamp}.png"
+            screenshot_path = os.path.join('test_reports/screenshots', screenshot_name)
+            context.driver.save_screenshot(screenshot_path)
+            
+            # Attach screenshot to Allure report
+            allure.attach(
+                context.driver.get_screenshot_as_png(),
+                name="Screenshot",
+                attachment_type=AttachmentType.PNG
+            )
+            
+            # Attach page source to Allure report
+            allure.attach(
+                context.driver.page_source,
+                name="Page Source",
+                attachment_type=AttachmentType.HTML
+            )
+            
+        except Exception as e:
+            print(f"Failed to take screenshot: {str(e)}")

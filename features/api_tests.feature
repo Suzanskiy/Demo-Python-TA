@@ -76,7 +76,7 @@ Feature: ReqRes API Users Endpoint
     And the response should contain "error" field
 
 #last AC I'm already tired but still enthusiastic
-      @delayed
+  @delayed
   Scenario Outline: Get users list with different delay times
     When I send GET request to "users" with delay of <delay> seconds
     Then the response status code should be 200
