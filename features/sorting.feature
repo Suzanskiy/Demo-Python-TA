@@ -16,4 +16,4 @@ Feature: Product Sorting Functionality
     When I sort products by "za"
     Then products should be sorted alphabetically descending
     And the first product should be "Test.allTheThings() T-Shirt (Red)"
-    And the last product should be "Sauce Labs Backpack" 
+    And the last product should be "Sauce Labs Backpack"

@@ -3,31 +3,20 @@
 #  See LICENSE for details.
 
 import json
-from behave import given, when, then, step
+from behave import when, then, step
 from page_objects.inventory_page import InventoryPage
-from page_objects.login_page import LoginPage
 
 # Load test data
 with open('test_data/products.json') as f:
     PRODUCT_DATA = json.load(f)
 
-@given('I am logged in as "{username}"')
-def step_impl(context, username):
-    login_page = LoginPage(context.driver)
-    login_page.open()
-    login_page.enter_username(username)
-    login_page.enter_password("secret_sauce")
-    login_page.click_login()
-    
-    context.inventory_page = InventoryPage(context.driver)
-    assert context.inventory_page.is_on_inventory_page()
-
-
 @step('I am on the inventory page')
 def step_impl(context):
     context.inventory_page = InventoryPage(context.driver)
     context.inventory_page.wait_for_page_load()
-    assert context.inventory_page.is_on_inventory_page()
+    assert context.inventory_page.is_on_inventory_page(), \
+        f"Expected to be on the Inventory page, but currently on: {context.driver.current_url}"
+
 
 @then('I should see {count:d} products listed')
 def step_impl(context, count):
