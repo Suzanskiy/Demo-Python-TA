@@ -13,7 +13,7 @@ Feature: Inventory Page Functionality
       | <all_users> |
 
   @ui @inventory @positive
-  Scenario Outline: Add product to cart
+  Scenario Outline: Add product to cart - <username>
     Given I am logged in as "<username>"
     When I am on the inventory page
     When I add "Sauce Labs Backpack" to the cart
@@ -25,7 +25,7 @@ Feature: Inventory Page Functionality
 
 
   @ui @inventory
-  Scenario Outline: Add multiple products to cart
+  Scenario Outline: Add multiple products to cart for <username>
     Given I am logged in as "<username>"
     When I am on the inventory page
     When I add "Sauce Labs Backpack" to the cart
@@ -38,7 +38,7 @@ Feature: Inventory Page Functionality
 
 
   @ui @inventory
-  Scenario Outline: Remove product from cart
+  Scenario Outline: Remove product from cart for <username>
     Given I am logged in as "<username>"
     When I am on the inventory page
     When I add "Sauce Labs Backpack" to the cart

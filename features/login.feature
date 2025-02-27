@@ -56,6 +56,7 @@ Feature: SauceDemo Login Functionality
 
   @ui @negative
   Scenario: Login with empty username
+    Given I am on the SauceDemo login page
     When I enter empty username
     And I enter password "secret_sauce"
     And I click the login button
