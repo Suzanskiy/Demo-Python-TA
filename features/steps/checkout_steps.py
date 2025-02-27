@@ -1,9 +1,12 @@
 #  © 2025 Serhii Suzanskyi
-#  Open-source and awesome! Use it, modify it, share it—just don’t break it.
+#  Open-source and awesome! Use it, modify it, share it—just don't break it.
 #  See LICENSE for details.
 
 from behave import when, then, step
 from page_objects.checkout_page import CheckoutPage
+from page_objects.order_complete_page import OrderCompletePage
+from page_objects.inventory_page import InventoryPage
+
 from decimal import Decimal
 
 @when('I click checkout')
@@ -29,49 +32,64 @@ def step_impl(context):
     | Total      | $43.18 |
     """
     expected_values = {row[0]: Decimal(row[1].replace('$', '')) for row in context.table}
-    
-    actual_item_total = context.checkout_page.get_item_total()
-    actual_tax = context.checkout_page.get_tax()
-    actual_total = context.checkout_page.get_total()
 
-    assert actual_item_total == expected_values['Item total'], \
-        f"Expected item total ${expected_values['Item total']}, but got ${actual_item_total}"
-    
-    assert actual_tax == expected_values['Tax'], \
-        f"Expected tax ${expected_values['Tax']}, but got ${actual_tax}"
-    
-    assert actual_total == expected_values['Total'], \
-        f"Expected total ${expected_values['Total']}, but got ${actual_total}"
+    actual_values = {
+        "Item total": context.checkout_page.get_item_total(),
+        "Tax": context.checkout_page.get_tax(),
+        "Total": context.checkout_page.get_total()
+    }
 
-    # Verify the calculation
-    calculated_total = actual_item_total + actual_tax
-    assert calculated_total == actual_total, \
-        f"Total amount ${actual_total} doesn't match calculated total ${calculated_total}"
+    errors = []  # Collect all mismatches
 
-@then('I should see the order confirmation')
+    for key, expected in expected_values.items():
+        actual = actual_values[key]
+        if actual != expected:
+            errors.append(f"{key} mismatch: expected ${expected}, but got ${actual}")
+
+    # Verify the total calculation
+    calculated_total = actual_values["Item total"] + actual_values["Tax"]
+    if calculated_total != actual_values["Total"]:
+        errors.append(f"Total amount mismatch: expected ${calculated_total}, but got ${actual_values['Total']}")
+
+    if errors:
+        raise AssertionError("\n".join(errors))  # Raise an error with all mismatches
+
+@then('I should see the order confirmation page')
 def step_impl(context):
-    assert "checkout-complete" in context.driver.current_url, "Not on order confirmation page"
+    context.order_complete_page = OrderCompletePage(context.driver)
+    assert context.order_complete_page.is_on_complete_page(), "Not on order confirmation page"
+    assert context.order_complete_page.is_order_complete_container_displayed(), \
+        "Order complete container is not displayed"
 
+@then('the confirmation header should be "{expected_header}"')
+def step_impl(context, expected_header):
+    actual_header = context.order_complete_page.get_confirmation_header()
+    assert actual_header == expected_header, \
+        f"Expected header '{expected_header}', but got '{actual_header}'"
 
-@step('I enter first name "Serhii"')
+@then('the confirmation text should contain "{expected_text}"')
+def step_impl(context, expected_text):
+    actual_text = context.order_complete_page.get_confirmation_text()
+    assert expected_text in actual_text, \
+        f"Expected text to contain '{expected_text}', but got '{actual_text}'"
+
+@when('I click back home')
 def step_impl(context):
-    """
-    :type context: behave.runner.Context
-    """
-    raise NotImplementedError(u'STEP: And I enter first name "Serhii"')
+    context.order_complete_page.click_back_home()
 
-
-@step('I enter last name "Suzanskyi"')
+@then('I should be back on the inventory page')
 def step_impl(context):
-    """
-    :type context: behave.runner.Context
-    """
-    raise NotImplementedError(u'STEP: And I enter last name "Suzanskyi"')
+    context.inventory_page = InventoryPage(context.driver)
+    assert context.inventory_page.is_on_inventory_page(), "Not back on inventory page"
 
+@step('I enter first name "{name}"')
+def step_impl(context, name):
+    context.checkout_page.enter_name(name)
 
-@step('I enter postal code "5701NR"')
-def step_impl(context):
-    """
-    :type context: behave.runner.Context
-    """
-    raise NotImplementedError(u'STEP: And I enter postal code "5701NR"')
+@step('I enter last name "{name}"')
+def step_impl(context, name):
+    context.checkout_page.enter_last_name(name)
+
+@step('I enter postal code "{code}"')
+def step_impl(context, code):
+    context.checkout_page.enter_postal_code(code)

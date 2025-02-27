@@ -47,4 +47,13 @@ class CheckoutPage(BasePage):
         return Decimal(total_text.split("$")[1])
 
     def is_on_checkout_page(self):
-        return "checkout" in self.driver.current_url 
+        return "checkout" in self.driver.current_url
+
+    def enter_name(self, first_name):
+        self.input_text(self.LOCATORS["first_name"], first_name)
+
+    def enter_last_name(self, last_name):
+        self.input_text(self.LOCATORS["last_name"], last_name)
+
+    def enter_postal_code(self, postal_code):
+        self.input_text(self.LOCATORS["postal_code"], postal_code)
