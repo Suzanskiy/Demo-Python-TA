@@ -2,12 +2,12 @@
 #  Open-source and awesome! Use it, modify it, share it—just don’t break it.
 #  See LICENSE for details.
 
-from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException
 import logging
 import os
 from datetime import datetime
+
+from selenium.webdriver.support.wait import WebDriverWait
+
 
 class TestBase:
     def __init__(self, driver):

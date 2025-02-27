@@ -17,7 +17,6 @@ def step_impl(context):
     assert context.inventory_page.is_on_inventory_page(), \
         f"Expected to be on the Inventory page, but currently on: {context.driver.current_url}"
 
-
 @then('I should see {count:d} products listed')
 def step_impl(context, count):
     actual_count = context.inventory_page.get_product_count()
@@ -58,7 +57,6 @@ def step_impl(context):
 def step_impl(context, product_name):
     product_data = next(p for p in PRODUCT_DATA["products"] if p["name"] == product_name)
     context.inventory_page.add_to_cart(product_data["id"])
-
 
 
 @then('the cart badge should show "{count}"')

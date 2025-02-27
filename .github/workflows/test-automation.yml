@@ -30,7 +30,7 @@ jobs:
       - name: Run Behave Tests
         run: |
           source .venv/bin/activate
-          behave  --tags=@login || true # Prevent pipeline failure on test failures
+          behave || true # Prevent pipeline failure on test failures
 
       - name: Install Allure
         run: |
@@ -62,15 +62,3 @@ jobs:
             github_token: ${{ secrets.GITHUB_TOKEN }}
             publish_branch: gh-pages
             publish_dir: allure-history
-#      - name: Upload Allure Report as Artifact
-#        uses: actions/upload-artifact@v4
-#        with:
-#          name: allure-report
-#          path: reports/allure-report
-#
-#      - name: Deploy Allure Report to GitHub Pages
-#        if: github.event_name == 'push'
-#        uses: peaceiris/actions-gh-pages@v3
-#        with:
-#          github_token: ${{ secrets.GITHUB_TOKEN }}
-#          publish_dir: reports/allure-report

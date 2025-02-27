@@ -1,21 +1,18 @@
+import os
+import shutil
 from datetime import datetime
+
 import allure
 from allure_commons.types import AttachmentType
 from behave.model_core import Status
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
-import os
-import shutil
-import tempfile
-
 from behave.parser import parse_file
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
 
-from utilities.driver_factory import DriverFactory
-from utilities.api_client import APIClient
 from config.users import Users
-from behave.model import Scenario
-from behave.model import Table
+from utilities.api_client import APIClient
+from utilities.driver_factory import DriverFactory
 
 
 def create_chrome_options():
@@ -103,8 +100,7 @@ def before_feature(context, feature):
 
     # Set up Chrome options and user data directory
     chrome_options = create_chrome_options()
-    # context.user_data_dir = user_data_dir
-    
+
     # Initialize the WebDriver
     service = Service()
     context.driver = webdriver.Chrome(service=service, options=chrome_options)

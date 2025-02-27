@@ -1,3 +1,7 @@
+#  © 2025 Serhii Suzanskyi
+#  Open-source and awesome! Use it, modify it, share it—just don’t break it.
+#  See LICENSE for details.
+
 from selenium.webdriver.common.by import By
 
 from .base_page import BasePage
