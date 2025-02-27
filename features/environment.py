@@ -25,12 +25,7 @@ def create_chrome_options():
     chrome_options.add_argument('--headless')  # Run in headless mode for CI
     chrome_options.add_argument('--disable-dev-shm-usage')
     chrome_options.add_argument('--disable-gpu')
-    
-    # Create a temporary directory for user data
-    # user_data_dir = tempfile.mkdtemp()
-    # chrome_options.add_argument(f'--user-data-dir={user_data_dir}')
-    
-    return chrome_options, #user_data_dir
+    return chrome_options
 
 def before_all(context):
     # Load configuration
@@ -115,15 +110,6 @@ def before_feature(context, feature):
     context.driver = webdriver.Chrome(service=service, options=chrome_options)
     context.driver.implicitly_wait(10)
 
-    # Process scenario outlines
-    for scenario in feature.walk_scenarios():
-        if hasattr(scenario, 'examples'):
-            for example in scenario.examples:
-                if '<valid_users>' in str(example.table):
-                    new_rows = []
-                    for user in context.valid_users:
-                        new_rows.append([user])
-                    example.table.rows = new_rows
 
 def after_feature(context, feature):
     if hasattr(context, 'driver'):
