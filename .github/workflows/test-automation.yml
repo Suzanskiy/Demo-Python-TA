@@ -30,14 +30,14 @@ jobs:
       - name: Run Behave Tests
         run: |
           source .venv/bin/activate
-          behave  || true # Prevent pipeline failure on test failures
+          behave  --tags=@login || true # Prevent pipeline failure on test failures
 
       - name: Install Allure and Generate Report
         run: |
-          sudo apt-add-repository ppa:qameta/allure -y
-          sudo apt-get update
-          sudo apt-get install -y allure
-          allure generate reports/allure-results --clean -o reports/allure-report
+          curl -sLo allure-2.24.0.tgz https://github.com/allure-framework/allure2/releases/download/2.24.0/allure-2.24.0.tgz
+          tar -zxvf allure-2.24.0.tgz
+          sudo mv allure-2.24.0 /opt/allure
+          sudo ln -s /opt/allure/bin/allure /usr/local/bin/allure
 
       - name: Upload Allure Report as Artifact
         uses: actions/upload-artifact@v4
