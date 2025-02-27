@@ -23,7 +23,7 @@ This project automates testing for the [SauceDemo](https://www.saucedemo.com/) e
 2. Test scenarios are designed to uncover hidden failures, which is hidden from standard_user account. Automation detects this issues which is very important, ****not just**** create a blank framework which starts browsers sessions, clicks something and thats it. 
 3. I have used openAI's chatgpt for consulting on errors I'm facing and to create this nice and informative Readme file
 4. While doing this test assigment I was dreaming to join the company
-5. French buldog with ball found as well as price changes, UI glitches in visual_user, missing fields on checkout and cart icon on wrong place. 
+5. American Buldog with ball found as well as price changes, UI glitches in visual_user, missing fields on checkout and cart icon on wrong place. 
 
 ## ⚙️ Installation  
 
