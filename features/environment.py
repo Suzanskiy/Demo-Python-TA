@@ -27,10 +27,10 @@ def create_chrome_options():
     chrome_options.add_argument('--disable-gpu')
     
     # Create a temporary directory for user data
-    user_data_dir = tempfile.mkdtemp()
-    chrome_options.add_argument(f'--user-data-dir={user_data_dir}')
+    # user_data_dir = tempfile.mkdtemp()
+    # chrome_options.add_argument(f'--user-data-dir={user_data_dir}')
     
-    return chrome_options, user_data_dir
+    return chrome_options, #user_data_dir
 
 def before_all(context):
     # Load configuration
@@ -107,8 +107,8 @@ def before_feature(context, feature):
         return
 
     # Set up Chrome options and user data directory
-    chrome_options, user_data_dir = create_chrome_options()
-    context.user_data_dir = user_data_dir
+    chrome_options = create_chrome_options()
+    # context.user_data_dir = user_data_dir
     
     # Initialize the WebDriver
     service = Service()
