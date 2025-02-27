@@ -1,9 +1,13 @@
+#  © 2025 Serhii Suzanskyi
+#  Open-source and awesome! Use it, modify it, share it—just don’t break it.
+#  See LICENSE for details.
+
 from selenium.common import TimeoutException
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select
+
 from .base_page import BasePage
+
 
 class InventoryPage(BasePage):
     # Locators
