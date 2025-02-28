@@ -1,3 +1,7 @@
+#  © 2025 Serhii Suzanskyi
+#  Open-source and awesome! Use it, modify it, share it—just don’t break it.
+#  See LICENSE for details.
+
 import requests
 import json
 import os

@@ -1,3 +1,7 @@
+#  © 2025 Serhii Suzanskyi
+#  Open-source and awesome! Use it, modify it, share it—just don’t break it.
+#  See LICENSE for details.
+
 from behave import when, then
 from features.api.api_client import ApiClient
 import json

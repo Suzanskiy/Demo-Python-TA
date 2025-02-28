@@ -25,12 +25,6 @@ def step_impl(context):
 
 @then('the order summary should show')
 def step_impl(context):
-    """
-    Verify order summary from table:
-    | Item total | $39.98 |
-    | Tax        | $3.20  |
-    | Total      | $43.18 |
-    """
     expected_values = {row[0]: Decimal(row[1].replace('$', '')) for row in context.table}
 
     actual_values = {
