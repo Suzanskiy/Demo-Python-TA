@@ -1,7 +1,7 @@
 # 🚀 SauceDemo Test Automation Project  
 
 ## 📌 Overview  
-This is the test assigment task for me to join company spriteCloud and here is the result. 
+This is the test implementation of the Python test automaiton framework
 
 This project automates testing for the [SauceDemo](https://www.saucedemo.com/) e-commerce website using:  
 ✅ **Python** – for test scripting  
